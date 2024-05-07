@@ -1,0 +1,13 @@
+name: Guppy
+exec: guppy_basecaller
+input_file_types: .fasta
+output_file_types: .fastq
+input_identifier: --input_path
+output_identifier: --save_path
+arguments:
+    --help: Displays help dialouge
+    --config: Verbose mode
+    --reverse_sequence: Specifies the output directory
+    --u_substitution: Any other argument the program supports
+pipeline_stages: "Basecalling"
+docs: https://timkahlke.github.io/LongRead_tutorials/BS_G.html

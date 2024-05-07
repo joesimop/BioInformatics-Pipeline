@@ -1,0 +1,16 @@
+The name of these files match the enum definitions as defined in enums.py.
+
+To add a program to be supported in the system. 
+The following file format that can be read by the pipline system:
+
+name: Guppy
+exec: guppy_basecaller
+input_file_types: .filetype1, .filetype2
+output_file_types: .filetype3, .filetype4
+input_identifier: Commandline identifier for input path (e.g. --input_path)
+output_identifier: Commandline identifier for input path (e.g. --output_path)
+arguments:
+    -a: Any other argument the program supports
+    -b: Because a program
+    -c: can support a lot of arguments
+pipline_stages: Basecalling, Raw, Other (These are for internal use. See enums.py for possible values.)
