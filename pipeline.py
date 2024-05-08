@@ -1,8 +1,13 @@
 import os
 from parsing import load_stage_config
+from helpers import pipeline_exists
 
 class Pipeline:
     def __init__(self, pipeline_name):
+
+        if not pipeline_exists(pipeline_name):
+            raise ValueError(f"Pipeline {pipeline_name} does not exist")
+        
         self.name = pipeline_name
         self.path = f"pipelines/{pipeline_name}"
         self.metadata_file = f"{self.path}/.{pipeline_name}_metadata.txt"
@@ -61,14 +66,15 @@ class Pipeline:
             if not os.path.exists(stage_output):
                 os.mkdir(stage_output)
             
-
-            if stage.connects_to_previous_stage:
+            #The input will exist, we checked when we loaded in the stages
+            if stage.data_source_is_stage:
                 input_dir = f"{output_dir}/{stage.data_source}/output"
             else:
                 input_dir = f"data/{stage.data_source}"
                 
+
             print(f"Executing Stage: {stage.name}")
             exec = stage.process.create_executable(input_dir, stage_output)
             print(f"Executing: {exec}")
-            os.system(exec)
+            #os.system(exec)
         

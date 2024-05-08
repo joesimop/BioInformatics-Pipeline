@@ -6,6 +6,9 @@ def already_exists(path):
 def in_pipeline_dir():
     return os.path.getcwd().split('/')[-1] == 'pipelines'
 
+def pipeline_exists(pipeline):
+    return os.path.exists(f"pipelines/{pipeline}")
+
 def stage_exists(pipeline, stage_name):
     return os.path.exists(f'pipelines/{pipeline}/{stage_name}')
 

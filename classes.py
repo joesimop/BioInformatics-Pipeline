@@ -29,19 +29,16 @@ class Process:
         
     def create_executable(self, input_dir, output_dir):
 
-        if self.is_executable(output_dir):
-            return f"""{self.program.exec_name}\\
-                    {self.program.input_cl_identfiier} {input_dir} \\ 
-                    {self.program.output_cl_identifier} {output_dir} \\ 
-                    {''.join([arg.cl_input for arg in self.arguments])}"""
-        else:
-            raise ValueError("Input or output directories do not exist")
+        return f"""{self.program.exec_name} \\
+                {self.program.input_cl_identfiier} {input_dir} \\ 
+                {self.program.output_cl_identifier} {output_dir} \\ 
+                {''.join([arg.cl_input for arg in self.arguments])}"""
         
     def set_input_dir(self, input_dir):
         self.input_dir = input_dir
     
 class Stage:
-    def __init__(self, stage_name, process, path_location, data_source, connects_to_previous_stage=False):
+    def __init__(self, stage_name, process, path_location, data_source, data_source_is_stage):
 
         self.name = stage_name                  # The name of the folder it resides in
         self.process = process                  # The process object that will be executed
@@ -49,7 +46,7 @@ class Stage:
         self.data_source = data_source          # Where the stage gets its data from, can be from /data or from a previous stage
                                                 # Note: The path is indeterminable, because we generate paths when executing. If we 
                                                 #       don't connect to the previous stage however, we can just use the data source itself
-        self.connects_to_previous_stage = connects_to_previous_stage
+        self.data_source_is_stage = data_source_is_stage
 
     def __str__(self):
         return f"""{self.name} - {self.process.program.name}
@@ -65,8 +62,7 @@ class Stage:
         with open(f"{self.path_location}/{self.name}.config", 'w') as file:
             file.write(f"Stage Name: {self.name}\n")
             file.write(f"Program Name: {self.process.program.name}\n")
-            file.write(f"Input Directory: {self.process.input_dir}\n")
+            file.write(f"Data Source: {self.data_source}\n")
             file.write(f"Arguments: {str(self.process.arguments)[1:-1]}\n")
-            file.write(f"Data Source: {self.previous_stage}\n")
             file.close()
                 

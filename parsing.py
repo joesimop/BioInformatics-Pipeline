@@ -114,14 +114,17 @@ def load_stage_config(stage_file_path):
     program = get_program_by_name(program_name)
     
     # Create a Process object
-    process = Process(program, input_dir, arguments)
+    process = Process(program, arguments)
     
     # Get the path and previous stage information
     data_source = config.get("Data Source")
 
-    if data_source == "":
+    pipeline = stage_file_path.split('/')[-2]
+
+    if data_source == "None":
         data_source = None
-    elif stage_exists(data_source):
+        connect_to_previous_stage = False
+    elif stage_exists(pipeline, data_source):
         connect_to_previous_stage = True
     elif data_source_exists(data_source):
         connect_to_previous_stage = False

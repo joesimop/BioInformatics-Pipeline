@@ -30,7 +30,7 @@ def create_pipeline(pipeline_name):
     #Create the base log file
     if not os.path.isfile(f"pipelines/{pipeline_name}/.{pipeline_name}_meta_data.log"):
         with open(f"pipelines/{pipeline_name}/.{pipeline_name}_metadata.txt", 'w') as file:
-            file.write("runs: 0")
+            file.write("runs: 0\n")
             file.write("last_created_stage: None")
             file.close()
 
@@ -62,7 +62,10 @@ def create_stage(pipeline_name, stage_name, program_name, data_source=None):
             connects_to_previous_stage = True
         elif data_source_exists(data_source):
             connects_to_previous_stage = False
-        raise ValueError("Input path location is required for processing")
+        else:
+            raise ValueError("Input path location is required for processing")
+    else:
+        connects_to_previous_stage = False
 
     #Create the base log file
     if not os.path.isfile(f"{stage_path}/{stage_name}_metadata.txt"):
