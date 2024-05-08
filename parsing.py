@@ -1,6 +1,37 @@
-from classes import Argument, Program
+import os
+from classes import Argument, Program, Process, Stage
+from helpers import stage_exists, data_source_exists
 
-def parse_program_file(text):
+def get_program_by_name(program_name):
+    if os.path.exists('supported_programs'):
+        programs = os.listdir('supported_programs')
+        for program_cfg in programs:
+            print(program_cfg[0:-3])
+            if program_cfg[0:-4] == program_name:
+
+                try:
+                    return parse_program_file(program_cfg)
+                except ValueError as e:
+                    print(f"Error parsing {program_cfg}: {e}")
+                    continue
+    else:
+        raise ValueError("Cannot find supported_programs directory")
+    
+def get_stage_by_name(pipeline, stage_name):
+    dir = f'pipelines/{pipeline}/{stage_name}'
+    if os.path.exists(dir):
+        try:
+            return load_stage_config(dir, f"{stage_name}.config")
+        except ValueError as e:
+            print(f"Error loading {stage_name}: {e}")
+    else:
+        raise ValueError("Cannot find stages directory")
+
+def parse_program_file(program_name):
+
+    with open(f"supported_programs/{program_name}", 'r') as file:
+        text = file.read()
+
     config = {
         'arguments': [],
         'extra_params': ''
@@ -47,6 +78,56 @@ def parse_program_file(text):
         output_file_types=config.get('output_file_types', []),
         input_cl_identfier=config.get('input_identifier', ''),
         output_cl_identifier=config.get('output_identifier', ''),
-        arguments=config.get('arguments', []),
+        common_arguments=config.get('arguments', []),
         pipeline_stages=config.get('pipeline_stages', [])
     )
+
+def load_stage_config(stage_file_path):
+
+    file_name = f"{stage_file_path.split('/')[-1]}.config"
+
+    # Read the configuration file
+    with open(f"{stage_file_path}/{file_name}", 'r') as file:
+        lines = file.readlines()
+    
+    # Prepare a dictionary to store configuration data
+    config = {}
+    in_arguments = False
+    for line in lines:
+        if line.startswith("Arguments:"):
+            in_arguments = True
+            config['Arguments'] = []
+            continue
+        elif in_arguments:
+            symbol, description = line.split(": ", 1)
+            config['Arguments'].append(Argument(symbol.strip(), description.strip()))
+        else:
+            key, value = line.split(": ", 1)
+            config[key.strip()] = value.strip()
+    
+    # Extract process related information assuming it's already included
+    program_name = config.get("Program Name")
+    input_dir = config.get("Input Directory")
+    arguments = config.get("Arguments")
+
+    #Get program
+    program = get_program_by_name(program_name)
+    
+    # Create a Process object
+    process = Process(program, input_dir, arguments)
+    
+    # Get the path and previous stage information
+    data_source = config.get("Data Source")
+
+    if data_source == "":
+        data_source = None
+    elif stage_exists(data_source):
+        connect_to_previous_stage = True
+    elif data_source_exists(data_source):
+        connect_to_previous_stage = False
+    else:
+        raise ValueError("Cannot find input path location for processing")
+    
+    # Create and return a Stage object
+    stage_name = config.get("Stage Name")
+    return Stage(stage_name, process, stage_file_path, data_source, connect_to_previous_stage)

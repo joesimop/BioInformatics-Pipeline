@@ -1,11 +1,10 @@
 import os
-from enums import PipelineStage
 
 class Argument:
     def __init__(self, symbol, description):
         self.symbol = symbol
         self.description = description
-        self.cl_input = f"{self.symbol} {self.description} "
+        self.cl_input = f"{self.symbol} {self.description} \\\n"
 
 class Program:
     def __init__(self, name, exec_name, input_file_types, output_file_types, input_cl_identfier, output_cl_identifier, common_arguments, pipeline_stages):
@@ -19,39 +18,55 @@ class Program:
         self.common_arguments = common_arguments
         
 
-    def print_arguments(self):
+    def print_argument_descriptions(self):
         for arg in self.common_arguments:
             print(f"{arg.symbol}: {arg.description}")
 
-    def is_executable(self):
-        return os.path.isdir(self.input_dir) and os.path.isdir(self.output_dir)
-
 class Process:
-    def __init__(self, program, input_dir, output_dir, arguments):
+    def __init__(self, program, arguments):
         self.program = program
-        self.input_dir = input_dir
-        self.output_dir = output_dir
         self.arguments = arguments
         
-    def create_executable(self):
-        return f"{self.program.exec_name} 
-                 {self.program.input_cl_identfiier} {self.input_dir} 
-                 {self.program.output_cl_identifier} {self.output_dir} 
-                 {str([arg.cl_input for arg in self.arguments])[1:-1]}"
+    def create_executable(self, input_dir, output_dir):
+
+        if self.is_executable(output_dir):
+            return f"""{self.program.exec_name}\\
+                    {self.program.input_cl_identfiier} {input_dir} \\ 
+                    {self.program.output_cl_identifier} {output_dir} \\ 
+                    {''.join([arg.cl_input for arg in self.arguments])}"""
+        else:
+            raise ValueError("Input or output directories do not exist")
+        
+    def set_input_dir(self, input_dir):
+        self.input_dir = input_dir
     
 class Stage:
-    def __init__(self, stage_name, process, path_location, previous_stage=None):
-        self.name = stage_name                  #Will be the name of the folder it resides in
-        self.process = process
-        self.path_location = path_location
-        self.previous_stage = previous_stage
+    def __init__(self, stage_name, process, path_location, data_source, connects_to_previous_stage=False):
+
+        self.name = stage_name                  # The name of the folder it resides in
+        self.process = process                  # The process object that will be executed
+        self.path_location = path_location      # The path to the stage's directory
+        self.data_source = data_source          # Where the stage gets its data from, can be from /data or from a previous stage
+                                                # Note: The path is indeterminable, because we generate paths when executing. If we 
+                                                #       don't connect to the previous stage however, we can just use the data source itself
+        self.connects_to_previous_stage = connects_to_previous_stage
 
     def __str__(self):
         return f"""{self.name} - {self.process.program.name}
                     Input Directory: {self.process.input_dir}
-                    Output Directory: {self.process.output_dir}
                 """
-    def verify_next_stage_compatibility(self):
-        if self.next_stage is not None:
-            if self.previous_stage.process.program.output_file_types != self.process.program.input_file_types:
-                raise ValueError("Output file types of the previous stage do not match input file types of current stage")
+                
+    def get_run_number(self):
+        if os.path.isfile(f"self.path_location/{self.name}_base.log"):
+            with open(f"self.path_location/{self.name}_base.log", 'r') as file:
+                return int(file.readline()[6])
+            
+    def save_configuration(self):
+        with open(f"{self.path_location}/{self.name}.config", 'w') as file:
+            file.write(f"Stage Name: {self.name}\n")
+            file.write(f"Program Name: {self.process.program.name}\n")
+            file.write(f"Input Directory: {self.process.input_dir}\n")
+            file.write(f"Arguments: {str(self.process.arguments)[1:-1]}\n")
+            file.write(f"Data Source: {self.previous_stage}\n")
+            file.close()
+                
