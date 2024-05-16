@@ -1,10 +1,11 @@
 import os
 from classes import Argument, Program, Process, Stage
 from helpers import stage_exists, data_source_exists
+from environment_setup import program_root, user_root
 
 def get_program_by_name(program_name):
-    if os.path.exists('supported_programs'):
-        programs = os.listdir('supported_programs')
+    if os.path.exists(f'{program_root}/supported_programs'):
+        programs = os.listdir(f'{program_root}/supported_programs')
         found_program = False
         for program_cfg in programs:
             print(program_cfg[0:-3])
@@ -21,7 +22,7 @@ def get_program_by_name(program_name):
         raise ValueError("Cannot find supported_programs directory")
     
 def get_stage_by_name(pipeline, stage_name):
-    dir = f'pipelines/{pipeline}/{stage_name}'
+    dir = f'{user_root}/pipelines/{pipeline}/{stage_name}'
     if os.path.exists(dir):
         try:
             return load_stage_config(dir, f"{stage_name}.config")
@@ -32,7 +33,7 @@ def get_stage_by_name(pipeline, stage_name):
 
 def parse_program_file(program_name):
 
-    with open(f"supported_programs/{program_name}", 'r') as file:
+    with open(f"{program_root}/supported_programs/{program_name}", 'r') as file:
         text = file.read()
 
     config = {
@@ -85,8 +86,10 @@ def parse_program_file(program_name):
         pipeline_stages=config.get('pipeline_stages', [])
     )
 
+#Loads in a stage, given the path to the stage
 def load_stage_config(stage_file_path):
 
+    # Get file name from the path.
     file_name = f"{stage_file_path.split('/')[-1]}.config"
 
     # Read the configuration file
@@ -110,7 +113,6 @@ def load_stage_config(stage_file_path):
     
     # Extract process related information assuming it's already included
     program_name = config.get("Program Name")
-    input_dir = config.get("Input Directory")
     arguments = config.get("Arguments")
 
     #Get program

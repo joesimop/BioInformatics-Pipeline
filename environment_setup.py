@@ -13,5 +13,11 @@ def setup_env():
         user = os.getenv("USERNAME")
         if not user:
             user = input("Could not find user, please enter a user to store the pipeline under: ")
+
+    #Check fo user directory and create if it doesn't exist
+    if not os.path.exists(f"{root_dir}/{user}"):
+        os.mkdir(f"{root_dir}/{user}")
     
-    return f"{root_dir}/{user}"
+    return root_dir, f"{root_dir}/{user}"
+
+program_root, user_root = setup_env()

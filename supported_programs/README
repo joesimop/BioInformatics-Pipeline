@@ -12,5 +12,5 @@ output_identifier: Commandline identifier for input path (e.g. --output_path)
 arguments:
     -a: Any other argument the program supports
     -b: Because a program
-    -c: can support a lot of arguments
+    --c: can support a lot of arguments
 pipline_stages: Basecalling, Raw, Other (These are for internal use. See enums.py for possible values.)
