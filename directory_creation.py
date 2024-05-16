@@ -1,7 +1,7 @@
 import os
 from classes import Argument, Program, Stage, Process
 from parsing import get_program_by_name
-from helpers import stage_exists, data_source_exists
+from helpers import stage_exists, data_source_exists, last_created_stage, set_last_created_stage
 
 def write_config_file(filepath, program_name, input_dir, output_dir, arguments, extra_params):
     with open(filepath, 'w') as file:
@@ -65,7 +65,13 @@ def create_stage(pipeline_name, stage_name, program_name, data_source=None):
         else:
             raise ValueError("Input path location is required for processing")
     else:
-        connects_to_previous_stage = False
+        #If we no data source was given, we connect to previously created stage
+        connects_to_previous_stage = True
+        data_source = last_created_stage(pipeline_name)
+        if data_source is None:
+            raise ValueError("No previous stage to connect to, please specify a data source")
+        
+
 
     #Create the base log file
     if not os.path.isfile(f"{stage_path}/{stage_name}_metadata.txt"):
@@ -82,6 +88,9 @@ def create_stage(pipeline_name, stage_name, program_name, data_source=None):
     
     #Save the configuration
     stage.save_configuration()
+
+    #Set the last created stage
+    set_last_created_stage(pipeline_name, stage_name)
     
 
     

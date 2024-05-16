@@ -38,7 +38,7 @@ class Process:
         self.input_dir = input_dir
     
 class Stage:
-    def __init__(self, stage_name, process, path_location, data_source, data_source_is_stage):
+    def __init__(self, stage_name, process, path_location, data_source, data_source_is_stage, order_in_pipeline=0):
 
         self.name = stage_name                  # The name of the folder it resides in
         self.process = process                  # The process object that will be executed
@@ -47,6 +47,7 @@ class Stage:
                                                 # Note: The path is indeterminable, because we generate paths when executing. If we 
                                                 #       don't connect to the previous stage however, we can just use the data source itself
         self.data_source_is_stage = data_source_is_stage
+        self.order_in_pipeline = 0
 
     def __str__(self):
         return f"""{self.name} - {self.process.program.name}

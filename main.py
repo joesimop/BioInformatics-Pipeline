@@ -1,9 +1,9 @@
+import sys
+import os
+
 from directory_creation import *
 from parsing import *
 from pipeline import Pipeline
 
-pip = Pipeline('test_pipeline')
 
-pip.load()
-
-pip.execute()
+print(os.getenv("BI_PIPELINE"))

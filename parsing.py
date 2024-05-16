@@ -5,15 +5,18 @@ from helpers import stage_exists, data_source_exists
 def get_program_by_name(program_name):
     if os.path.exists('supported_programs'):
         programs = os.listdir('supported_programs')
+        found_program = False
         for program_cfg in programs:
             print(program_cfg[0:-3])
             if program_cfg[0:-4] == program_name:
-
+                found_program = True
                 try:
                     return parse_program_file(program_cfg)
                 except ValueError as e:
                     print(f"Error parsing {program_cfg}: {e}")
                     continue
+        if not found_program:
+            raise ValueError("Cannot find program in supported_programs directory")
     else:
         raise ValueError("Cannot find supported_programs directory")
     
