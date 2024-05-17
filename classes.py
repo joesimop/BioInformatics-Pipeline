@@ -28,17 +28,14 @@ class Process:
         self.arguments = arguments
         
     def create_executable(self, input_dir, output_dir):
-
-        return f"""{self.program.exec_name} \\
-                {self.program.input_cl_identfiier} {input_dir} \\ 
-                {self.program.output_cl_identifier} {output_dir} \\ 
-                {''.join([arg.cl_input for arg in self.arguments])}"""
+        print(self.arguments)
+        return f"{self.program.exec_name} \\\n\t{self.program.input_cl_identfiier} {input_dir} \\\n\t{self.program.output_cl_identifier} {output_dir} \\\n\t{'\t'.join([arg.cl_input for arg in self.arguments])}"
         
     def set_input_dir(self, input_dir):
         self.input_dir = input_dir
     
 class Stage:
-    def __init__(self, stage_name, process, path_location, data_source, data_source_is_stage, order_in_pipeline=0):
+    def __init__(self, stage_name, process, path_location, data_source, data_source_is_stage):
 
         self.name = stage_name                  # The name of the folder it resides in
         self.process = process                  # The process object that will be executed
@@ -47,11 +44,17 @@ class Stage:
                                                 # Note: The path is indeterminable, because we generate paths when executing. If we 
                                                 #       don't connect to the previous stage however, we can just use the data source itself
         self.data_source_is_stage = data_source_is_stage
-        self.order_in_pipeline = 0
 
     def __str__(self):
-        return f"""{self.name} - {self.process.program.name}
-                    Input Directory: {self.process.input_dir}
+        name = self.name if self.name == self.process.program.name else f"{self.name} - {self.process.program.name}"
+        input = f"Input Stage: {self.data_source}" if self.data_source_is_stage else f"Input Data: {self.data_source}"
+        args = f"Arguments: \n" if self.process.arguments else "Arguments: None\n"
+        for arg in self.process.arguments:
+            args += f"\t{arg.symbol}: {arg.description}\n"
+
+        return f"""{name}
+{input}
+{args}---------------------------------------------------------------
                 """
                 
     def get_run_number(self):

@@ -17,10 +17,17 @@ def main(command_line=None):
         create_pipeline(args.pipeline_name)
     elif args.command == 'create_stage':
         create_stage(args.pipeline_name, args.stage_name, args.program_name, args.data_source)
-    elif args.command == 'run':
-        print("Running pipeline")
     elif args.command == 'list_programs':
         list_available_programs()
+    elif args.command == "run":
+         pipeline = Pipeline(args.pipeline_name)
+         pipeline.load()
+         pipeline.execute()
+    elif args.command == 'p':
+        pipeline = Pipeline(args.pipeline_name)
+        pipeline.load()
+
+        pipeline.print()
     else:
         print("Invalid command")
         sys.exit(1)

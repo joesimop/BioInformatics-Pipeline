@@ -1,7 +1,7 @@
-import os
+import os, sys
 from classes import Argument, Program, Stage, Process
 from parsing import get_program_by_name
-from helpers import stage_exists, data_source_exists, last_created_stage, set_last_created_stage
+from helpers import stage_exists, data_source_exists, last_created_stage, set_last_created_stage, byop_error
 from environment_setup import user_root
 
 def write_config_file(filepath, program_name, input_dir, output_dir, arguments, extra_params):
@@ -20,14 +20,6 @@ def write_config_file(filepath, program_name, input_dir, output_dir, arguments, 
         # Write extra parameters
         file.write(f"extra_params: {extra_params}\n")
 
-def setup_user_root():
-    if not os.path.exists(user_root):
-        os.makedirs(user_root)
-    
-    create_pipline_directory()
-    create_data_directory()
-
-    return 
 def create_pipeline(pipeline_name):
 
     #Ensure there is a pipeline directory
@@ -51,10 +43,6 @@ def create_pipline_directory():
     if not os.path.exists(f'{user_root}/pipelines'):
         os.makedirs(f'{user_root}/pipelines')
 
-def create_data_directory():
-    if not os.path.exists(f'{user_root}/data'):
-        os.makedirs(f'{user_root}/data')
-
 def create_stage(pipeline_name, stage_name, program_name, data_source=None):
 
     #Ensure there is a pipeline directory
@@ -76,13 +64,14 @@ def create_stage(pipeline_name, stage_name, program_name, data_source=None):
         elif data_source_exists(data_source):
             connects_to_previous_stage = False
         else:
-            raise ValueError("Input path location is required for processing")
+            byop_error("Input data source does not exist")
     else:
         #If we no data source was given, we connect to previously created stage
         connects_to_previous_stage = True
         data_source = last_created_stage(pipeline_name)
         if data_source is None:
-            raise ValueError("No previous stage to connect to, please specify a data source")
+            print("No previous stage to connect to, please specify a data source")
+            sys.exit(1)
         
 
 

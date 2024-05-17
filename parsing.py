@@ -8,7 +8,6 @@ def get_program_by_name(program_name):
         programs = os.listdir(f'{program_root}/supported_programs')
         found_program = False
         for program_cfg in programs:
-            print(program_cfg[0:-3])
             if program_cfg[0:-4] == program_name:
                 found_program = True
                 try:

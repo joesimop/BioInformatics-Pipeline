@@ -1,15 +1,16 @@
 import os
 from parsing import load_stage_config
-from helpers import pipeline_exists
+from helpers import pipeline_exists, byop_error
+from environment_setup import user_root
 
 class Pipeline:
     def __init__(self, pipeline_name):
 
         if not pipeline_exists(pipeline_name):
-            raise ValueError(f"Pipeline {pipeline_name} does not exist")
+            byop_error(f"Pipeline {pipeline_name} does not exist")
         
         self.name = pipeline_name
-        self.path = f"pipelines/{pipeline_name}"
+        self.path = f"{user_root}/pipelines/{pipeline_name}"
         self.metadata_file = f"{self.path}/.{pipeline_name}_metadata.txt"
         self.stages = {}
         self.ordered_stages = []
@@ -23,6 +24,12 @@ class Pipeline:
             if stage.name == stage_name:
                 return stage
         return None
+    
+    def print(self):
+        print(f"\nPipeline Name: {self.name}\n")
+        for i in range(0, len(self.ordered_stages)):
+            print(f"\nStage {i+1}: ", end="")
+            print(self.ordered_stages[i])
     
     def save_pipeline(self):
         with open(f"{self.path}/{self.name}.config", 'w') as file:
@@ -38,20 +45,23 @@ class Pipeline:
             if os.path.isdir(f"{self.path}/{stage_name}"):
                 self.add_stage(stage_name, load_stage_config(f"{self.path}/{stage_name}"))
 
+        self.sort_stages()
+
     def verify_stage_compatablilty(self):
         for i in range(1, len(self.stages)):
             if self.stages[i].process.program.name not in self.stages[i-1].process.program.pipeline_stages:
                 raise ValueError(f"Stage {self.stages[i].name} is not compatible with the previous stage")
-            
+
+    #Might be the most horiffic sorter to ever exist, but sort the stages in the order they should be executed  
     def sort_stages(self):
         
         # Find the initial stage, which does not depend on any other stages
         # Assumes only one such stage exists for simplicity
-        initial_stage = next((stage for stage in self.stages if not stage.data_source_is_stage and stage.data_source == None), None)
+        initial_stage = next((self.stages[stage] for stage in self.stages if not self.stages[stage].data_source_is_stage), None)
         
-        # If no initial stage with 'None', you might need to handle this case differently
         if not initial_stage:
-            raise ValueError("No initial stage found or multiple initial stages exist.")
+            byop_error("No initial stage with a data source in the data folder found")
+
 
         # Build the ordered list of stages
         self.ordered_stages = [initial_stage]
@@ -59,7 +69,8 @@ class Pipeline:
 
             last_stage = self.ordered_stages[-1]
             # Find the next stage whose data source is the name of the last stage
-            next_stage = next((stage for stage in self.stages if stage.data_source_is_stage and stage.data_source == last_stage.name), None)
+            next_stage = next((self.stages[stage] for stage in self.stages if self.stages[stage].data_source_is_stage \
+                               and self.stages[stage].data_source == last_stage.name), None)
             
             if not next_stage:
                 break  # No next stage found, sequence is complete
@@ -82,12 +93,8 @@ class Pipeline:
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
 
-
-        self.sort_stages()
-
         print("Executing Pipeline\n")
-        last_ran_stage = None
-        for stage in self.stages:
+        for stage in self.ordered_stages:
 
 
             #Make an output directory for the stage
@@ -99,7 +106,7 @@ class Pipeline:
             if stage.data_source_is_stage:
                 input_dir = f"{output_dir}/{stage.data_source}/output"
             else:
-                input_dir = f"data/{stage.data_source}"
+                input_dir = f"{user_root}/data/{stage.data_source}"
                 
             
 

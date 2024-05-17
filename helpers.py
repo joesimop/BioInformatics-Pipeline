@@ -1,4 +1,4 @@
-import os
+import os, sys
 from environment_setup import user_root
 
 def already_exists(path):
@@ -39,3 +39,7 @@ def set_last_created_stage(pipeline, stage):
         file.seek(8)
         file.write(f"last_created_stage: {stage}")
         file.close()
+
+def byop_error(message):
+    print(f"BYOP Error: {message}")
+    sys.exit(1)

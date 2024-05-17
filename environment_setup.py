@@ -17,6 +17,8 @@ def setup_env():
     #Check fo user directory and create if it doesn't exist
     if not os.path.exists(f"{root_dir}/{user}"):
         os.mkdir(f"{root_dir}/{user}")
+        os.mkdir(f"{root_dir}/{user}/pipelines")
+        os.mkdir(f"{root_dir}/{user}/data")
     
     return root_dir, f"{root_dir}/{user}"
 
