@@ -29,6 +29,35 @@ def get_stage_by_name(pipeline, stage_name):
             print(f"Error loading {stage_name}: {e}")
     else:
         raise ValueError("Cannot find stages directory")
+    
+def parse_config_file(file_path, parse_dict):
+
+    with open(file_path, 'r') as file:
+        text = file.read()
+
+
+    lines = text.strip().split('\n')
+    in_arguments = False
+    for line in lines:
+        line = line.strip()
+        if line.startswith('Arguments:'):
+            in_arguments = True
+        elif in_arguments and line.startswith('-'):
+            symbol, description = line.split(': ', 1)
+            parse_dict['Arguments'].append(Argument(symbol.strip(), description.strip()))
+        elif line:
+            if ':' in line:
+                key, value = line.split(': ', 1)
+                key = key.strip()
+                value = value.strip()
+                if key in ['input_file_types', 'output_file_types']:
+                    parse_dict[key] = value.split(', ')
+                else:
+                    parse_dict[key] = value
+    
+    return parse_dict
+
+
 
 def parse_program_file(program_name):
 
@@ -36,28 +65,11 @@ def parse_program_file(program_name):
         text = file.read()
 
     config = {
-        'arguments': [],
-        'extra_params': ''
+        'Arguments': [],
+        'Extra Params': ''
     }
-    current_arg = None
-    lines = text.strip().split('\n')
-
-    for line in lines:
-        line = line.strip()
-        if line.startswith('arguments:'):
-            current_arg = 'arguments'
-        elif current_arg == 'arguments' and line.startswith('-'):
-            symbol, description = line.split(': ', 1)
-            config['arguments'].append(Argument(symbol.strip(), description.strip()))
-        elif line:
-            if ':' in line:
-                key, value = line.split(': ', 1)
-                key = key.strip()
-                value = value.strip()
-                if key in ['input_file_types', 'output_file_types', 'pipeline_stages']:
-                    config[key] = value.split(', ')
-                else:
-                    config[key] = value
+    
+    config = parse_config_file(f"{program_root}/supported_programs/{program_name}", config)
 
     #Error Checking values
     if not config.get('name'):
@@ -91,24 +103,7 @@ def load_stage_config(stage_file_path):
     # Get file name from the path.
     file_name = f"{stage_file_path.split('/')[-1]}.config"
 
-    # Read the configuration file
-    with open(f"{stage_file_path}/{file_name}", 'r') as file:
-        lines = file.readlines()
-    
-    # Prepare a dictionary to store configuration data
-    config = {}
-    in_arguments = False
-    for line in lines:
-        if line.startswith("Arguments:"):
-            in_arguments = True
-            config['Arguments'] = []
-            continue
-        elif in_arguments:
-            symbol, description = line.split(": ", 1)
-            config['Arguments'].append(Argument(symbol.strip(), description.strip()))
-        else:
-            key, value = line.split(": ", 1)
-            config[key.strip()] = value.strip()
+    config = parse_config_file(f"{stage_file_path}/{file_name}", {'Arguments': []})
     
     # Extract process related information assuming it's already included
     program_name = config.get("Program Name")
