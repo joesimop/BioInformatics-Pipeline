@@ -1,6 +1,6 @@
 import os
 from classes import Argument, Program, Process, Stage
-from helpers import stage_exists, data_source_exists
+from helpers import stage_exists, data_source_exists, byop_error
 from environment_setup import program_root, user_root
 
 def get_program_by_name(program_name):
@@ -16,9 +16,9 @@ def get_program_by_name(program_name):
                     print(f"Error parsing {program_cfg}: {e}")
                     continue
         if not found_program:
-            raise ValueError("Cannot find program in supported_programs directory")
+            byop_error("Cannot find program in supported_programs directory")
     else:
-        raise ValueError("Cannot find supported_programs directory")
+        byop_error("Cannot find supported_programs directory")
     
 def get_stage_by_name(pipeline, stage_name):
     dir = f'{user_root}/pipelines/{pipeline}/{stage_name}'
@@ -28,7 +28,7 @@ def get_stage_by_name(pipeline, stage_name):
         except ValueError as e:
             print(f"Error loading {stage_name}: {e}")
     else:
-        raise ValueError("Cannot find stages directory")
+        byop_error("Cannot find stages directory")
     
 def parse_config_file(file_path, parse_dict):
 
@@ -73,17 +73,17 @@ def parse_program_file(program_name):
 
     #Error Checking values
     if not config.get('name'):
-        raise ValueError("Name is a required field. Please provide a name in the configuration file.")
+        byop_error("Name is a required field. Please provide a name in the configuration file.")
     if not config.get('exec'):
-        raise ValueError("Executable name is a required field. Please provide an executable name in the configuration file.")
+        byop_error("Executable name is a required field. Please provide an executable name in the configuration file.")
     if not config.get('input_identifier'):
-        raise ValueError("Input identifier is a required field. Please provide an input identifier in the configuration file.")
+        byop_error("Input identifier is a required field. Please provide an input identifier in the configuration file.")
     if not config.get('output_identifier'):
-        raise ValueError("Output identifier is a required field. Please provide an output identifier in the configuration file.")
+        byop_error("Output identifier is a required field. Please provide an output identifier in the configuration file.")
     if not config.get('input_file_types'):
-        raise ValueError("Input file types is a required field. Please provide an input file type in the configuration file.")
+        byop_error("Input file types is a required field. Please provide an input file type in the configuration file.")
     if not config.get('output_file_types'):
-        raise ValueError("Output file types is a required field. Please provide an output file type in the configuration file.")
+        byop_error("Output file types is a required field. Please provide an output file type in the configuration file.")
 
     # Creating the Program instance with parsed data
     return Program(
@@ -128,7 +128,7 @@ def load_stage_config(stage_file_path):
     elif data_source_exists(data_source):
         connect_to_previous_stage = False
     else:
-        raise ValueError("Cannot find input path location for processing")
+        byop_error("Cannot find input path location for processing")
     
     # Create and return a Stage object
     stage_name = config.get("Stage Name")

@@ -50,7 +50,7 @@ class Pipeline:
     def verify_stage_compatablilty(self):
         for i in range(1, len(self.stages)):
             if self.stages[i].process.program.name not in self.stages[i-1].process.program.pipeline_stages:
-                raise ValueError(f"Stage {self.stages[i].name} is not compatible with the previous stage")
+                byop_error(f"Stage {self.stages[i].name} is not compatible with the previous stage")
 
     #Might be the most horiffic sorter to ever exist, but sort the stages in the order they should be executed  
     def sort_stages(self):
