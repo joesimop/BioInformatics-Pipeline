@@ -46,3 +46,6 @@ def set_last_created_stage(pipeline, stage):
 def byop_error(message):
     print(f"BYOP Error: {message}")
     sys.exit(1)
+
+def contstruct_input_dir(pipeline, stage):
+    return f"{user_root}/pipelines/{pipeline}/{stage}/output"

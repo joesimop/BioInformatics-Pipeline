@@ -27,6 +27,7 @@ class Pipeline:
     
     def print(self):
         print(f"\nPipeline Name: {self.name}\n")
+        print(self.ordered_stages)
         for i in range(0, len(self.ordered_stages)):
             print(f"\nStage {i+1}: ", end="")
             print(self.ordered_stages[i])

@@ -4,8 +4,9 @@ def setup_env():
     root_dir = os.getenv("BI_PIPELINE")
 
     if not root_dir:
-        print("Please set the BI_PIPELINE environment variable to the root directory of the pipeline")
-        sys.exit(1)
+        root_dir = "/Users/joesimop/Desktop/Classes/BI_Pipeline"
+        # print("Please set the BI_PIPELINE environment variable to the root directory of the pipeline")
+        # sys.exit(1)
     
     user = os.getenv("USER")
 

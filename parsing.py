@@ -140,4 +140,11 @@ def load_stage_config(stage_file_path):
     
     # Create and return a Stage object
     stage_name = config.get(StageParseKeys.stage_name.value)
-    return Stage(stage_name, process, stage_file_path, data_source, connect_to_previous_stage)
+
+    #Remove all mandatory parameters from config so only optionals are left:
+    config.pop(StageParseKeys.program_name.value)
+    config.pop(StageParseKeys.stage_name.value)
+    config.pop(StageParseKeys.data_source.value)
+    config.pop(StageParseKeys.arguments.value)
+
+    return Stage(stage_name, process, stage_file_path, data_source, connect_to_previous_stage, config)

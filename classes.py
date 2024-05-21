@@ -35,7 +35,7 @@ class Process:
         self.input_dir = input_dir
     
 class Stage:
-    def __init__(self, stage_name, process, path_location, data_source, data_source_is_stage):
+    def __init__(self, stage_name, process, path_location, data_source, data_source_is_stage, optional_parameters={}):
 
         self.name = stage_name                  # The name of the folder it resides in
         self.process = process                  # The process object that will be executed
@@ -44,17 +44,23 @@ class Stage:
                                                 # Note: The path is indeterminable, because we generate paths when executing. If we 
                                                 #       don't connect to the previous stage however, we can just use the data source itself
         self.data_source_is_stage = data_source_is_stage
+        self.optional_parameters = optional_parameters
 
     def __str__(self):
         name = self.name if self.name == self.process.program.name else f"{self.name} - {self.process.program.name}"
         input = f"Input Stage: {self.data_source}" if self.data_source_is_stage else f"Input Data: {self.data_source}"
-        args = f"Arguments: \n" if self.process.arguments else "Arguments: None\n"
+        args = f"Program Arguments: \n" if self.process.arguments else "Program Arguments: None\n"
         for arg in self.process.arguments:
             args += f"\t{arg.symbol}: {arg.description}\n"
 
+        modifiers ="Modifiers: \n" if self.optional_parameters else "Modifiers: None"
+        for p in self.optional_parameters:
+            modifiers += f"\t{p}: {", ".join(self.optional_parameters[p])}\n"
+
         return f"""{name}
 {input}
-{args}---------------------------------------------------------------
+{args}{modifiers}
+---------------------------------------------------------------
                 """
                 
     def get_run_number(self):
