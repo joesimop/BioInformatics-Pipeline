@@ -16,7 +16,7 @@ def main(command_line=None):
     if args.command == 'create_pipeline':
         create_pipeline(args.pipeline_name)
     elif args.command == 'create_stage':
-        create_stage(args.pipeline_name, args.stage_name, args.program_name, args.data_source)
+        create_stage(args)
     elif args.command == 'list_programs':
         list_available_programs()
     elif args.command == "run":

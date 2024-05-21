@@ -96,7 +96,6 @@ class Pipeline:
         print("Executing Pipeline\n")
         for stage in self.ordered_stages:
 
-
             #Make an output directory for the stage
             stage_output = f"{output_dir}/{stage.name}"
             if not os.path.exists(stage_output):

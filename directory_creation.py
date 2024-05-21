@@ -43,7 +43,13 @@ def create_pipeline(pipeline_name):
     if not os.path.exists(f"{user_root}/pipelines/{pipeline_name}/executions"):
         os.mkdir(f"{user_root}/pipelines/{pipeline_name}/executions")
 
-def create_stage(pipeline_name, stage_name, program_name, data_source=None):
+def create_stage(cli_input):
+
+    #Get the arguments
+    pipeline_name = cli_input.pipeline_name
+    stage_name = cli_input.stage_name
+    program_name = cli_input.program_name
+    data_source = cli_input.data_source
 
     #Ensure there is a pipeline directory
     create_pipeline(pipeline_name)
@@ -87,7 +93,7 @@ def create_stage(pipeline_name, stage_name, program_name, data_source=None):
     stage = Stage(stage_name, process, stage_path, data_source, connects_to_previous_stage)
     
     #Save the configuration
-    stage.save_configuration()
+    stage.save_configuration(cli_input)
 
     #Set the last created stage
     set_last_created_stage(pipeline_name, stage_name)

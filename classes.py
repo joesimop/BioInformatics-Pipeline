@@ -1,5 +1,5 @@
 import os
-
+from file_parser_keys import ProgramParseKeys, StageParseKeys
 class Argument:
     def __init__(self, symbol, description):
         self.symbol = symbol
@@ -29,7 +29,7 @@ class Process:
         
     def create_executable(self, input_dir, output_dir):
         print(self.arguments)
-        return f"{self.program.exec_name} \\\n\t{self.program.input_cl_identfiier} {input_dir} \\\n\t{self.program.output_cl_identifier} {output_dir} \\\n\t{'\t'.join([arg.cl_input for arg in self.arguments])}"
+        return f"{self.program.exec_name} \\\n\t{self.program.input_cl_identfiier} {input_dir} \\\n\t{self.program.output_cl_identifier} {output_dir} \\\n\t{''.join([arg.cl_input for arg in self.arguments])}"
         
     def set_input_dir(self, input_dir):
         self.input_dir = input_dir
@@ -62,11 +62,24 @@ class Stage:
             with open(f"self.path_location/{self.name}_base.log", 'r') as file:
                 return int(file.readline()[6])
             
-    def save_configuration(self):
+    def save_configuration(self, optional_args):
         with open(f"{self.path_location}/{self.name}.config", 'w') as file:
-            file.write(f"Stage Name: {self.name}\n")
-            file.write(f"Program Name: {self.process.program.name}\n")
-            file.write(f"Data Source: {self.data_source}\n")
-            file.write(f"Arguments: {str(self.process.arguments)[1:-1]}\n")
+            file.write(f"{StageParseKeys.stage_name.value}: {self.name}\n")
+            file.write(f"{StageParseKeys.program_name.value}: {self.process.program.name}\n")
+            file.write(f"{StageParseKeys.data_source.value} {self.data_source}\n")
+
+            if optional_args.input_file_type:
+                encoded = ", ".join(optional_args.input_file_type)
+                file.write(f"{StageParseKeys.input_file_type.value} {encoded}\n")
+
+            if optional_args.single_file_input:
+                encoded = ", ".join(optional_args.single_file_input)
+                file.write(f"{StageParseKeys.single_file_input.value}: {encoded}\n")
+
+            if optional_args.input_subdir:
+                encoded = ", ".join(optional_args.input_subdir)
+                file.write(f"{StageParseKeys.input_subdir.value}: {encoded}\n")
+
+            file.write(f"{StageParseKeys.arguments.value}: {str(self.process.arguments)[1:-1]}\n")
             file.close()
                 
