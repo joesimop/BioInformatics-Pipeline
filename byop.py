@@ -26,7 +26,6 @@ def main(command_line=None):
     elif args.command == 'p':
         pipeline = Pipeline(args.pipeline_name)
         pipeline.load()
-
         pipeline.print()
     else:
         print("Invalid command")

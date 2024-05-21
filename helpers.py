@@ -4,6 +4,9 @@ from environment_setup import user_root
 def already_exists(path):
     return os.path.exists(path)
 
+def isfile(path):
+    return os.path.isfile(path)
+
 def in_pipeline_dir():
     return user_root.split('/')[-1] == 'pipelines'
 
@@ -18,7 +21,7 @@ def data_source_exists(data_source):
 
 #Check if the last created stage exists
 def last_created_stage(pipeline):
-    if os.path.isfile(f"{user_root}/pipelines/{pipeline}/.{pipeline}_metadata.txt"):
+    if isfile(f"{user_root}/pipelines/{pipeline}/.{pipeline}_metadata.txt"):
         with open(f"{user_root}/pipelines/{pipeline}/.{pipeline}_metadata.txt", 'r') as file:
             file.readline()     # Skip the first line
             stage = file.readline().split(': ')[1]

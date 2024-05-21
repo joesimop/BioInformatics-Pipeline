@@ -30,7 +30,9 @@ def get_parser():
     #Create a stage, within a pipeline
     create_stage = subparsers.add_parser('create_stage', help='Create a new stage in a pipeline', parents=[pipeline_parent_parser, stage_parent_parser], formatter_class=RawTextHelpFormatter)
     create_stage.add_argument('program_name', help='Name of the program to run in the stage')
-    create_stage.add_argument('-data_source', help='Name of the data source to use in the stage.\nIt can be a stage in this pipeline or a directory/file in your data folder', default=None, metavar="")
+    create_stage.add_argument('-data_source', help='Name of the data source to use in the stage.\nIt can be a stage in this pipeline or a directory/file in your data folder.\n\n', default=None, metavar="")
+    create_stage.add_argument('-input_file_type', help="Custom file extension to get from previous stage.\nThere are default expected file types for each program.\nIf you want to use a different file type, you can specify it here.\nI.E: -input_file_type .txt .cfg\n\n", default=None, metavar="")
+    create_stage.add_argument('-single_file_input', help='If only one file from the previous stage is wanted, designate it here.\nMust be a file you know is output by the previous stage.\n\n', default=None, metavar="")
 
     #Run a pipeline
     run_pipeline = subparsers.add_parser('run', help='Run a pipeline', parents=[pipeline_parent_parser])

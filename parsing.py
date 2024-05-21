@@ -40,7 +40,7 @@ def parse_config_file(file_path, parse_dict):
     in_arguments = False
     for line in lines:
         line = line.strip()
-        if line.startswith('Arguments:'):
+        if line.lower().startswith('arguments:'):
             in_arguments = True
         elif in_arguments and line.startswith('-'):
             symbol, description = line.split(': ', 1)
