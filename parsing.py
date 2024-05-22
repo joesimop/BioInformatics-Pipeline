@@ -126,7 +126,7 @@ def load_stage_config(stage_file_path):
     # Get the path and previous stage information
     data_source = config.get(StageParseKeys.data_source.value, "None")
 
-    pipeline = stage_file_path.split('/')[-2]
+    pipeline = stage_file_path.split('/')[-3]
 
     if data_source == "None":
         data_source = None

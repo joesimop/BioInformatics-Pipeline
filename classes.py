@@ -78,7 +78,7 @@ class Stage:
         with open(f"{self.path_location}/{self.name}.config", 'w') as file:
             file.write(f"{StageParseKeys.stage_name.value}: {self.name}\n")
             file.write(f"{StageParseKeys.program_name.value}: {self.process.program.name}\n")
-            file.write(f"{StageParseKeys.data_source.value} {self.data_source}\n")
+            file.write(f"{StageParseKeys.data_source.value}: {self.data_source}\n")
 
             if optional_args.input_file_type:
                 encoded = ", ".join(optional_args.input_file_type)

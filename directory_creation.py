@@ -17,7 +17,7 @@ def create_pipeline(pipeline_name):
         os.mkdir(f"{user_root}/pipelines/{pipeline_name}")
 
     #Create the base log file
-    if not isfile(f"{user_root}pipelines/{pipeline_name}/.{pipeline_name}_meta_data.log"):
+    if not isfile(f"{user_root}pipelines/{pipeline_name}/.{pipeline_name}_metadata.txt"):
         with open(f"{user_root}/pipelines/{pipeline_name}/.{pipeline_name}_metadata.txt", 'w') as file:
             file.write("runs: 0\n")
             file.write("last_created_stage: None")
@@ -27,6 +27,10 @@ def create_pipeline(pipeline_name):
     if not os.path.exists(f"{user_root}/pipelines/{pipeline_name}/executions"):
         os.mkdir(f"{user_root}/pipelines/{pipeline_name}/executions")
 
+    #Create the stages directory
+    if not os.path.exists(f"{user_root}/pipelines/{pipeline_name}/stages"):
+        os.mkdir(f"{user_root}/pipelines/{pipeline_name}/stages")
+
 def create_stage(cli_input):
 
     #Get the arguments
@@ -35,14 +39,14 @@ def create_stage(cli_input):
     program_name = cli_input.program_name
     data_source = cli_input.data_source
 
-    #Ensure there is a pipeline directory
-    create_pipeline(pipeline_name)
+    if not pipeline_exists(pipeline_name):
+        byop_error(f"Pipeline \"{pipeline_name}\" does not exist")
 
     #Create Stage Directory if it does not exist
-    if not os.path.exists(f"{user_root}/pipelines/{pipeline_name}/{stage_name}"):
-        os.mkdir(f"{user_root}/pipelines/{pipeline_name}/{stage_name}")
+    if not os.path.exists(f"{user_root}/pipelines/{pipeline_name}/stages/{stage_name}"):
+        os.mkdir(f"{user_root}/pipelines/{pipeline_name}/stages/{stage_name}")
 
-    stage_path = f"{user_root}/pipelines/{pipeline_name}/{stage_name}"
+    stage_path = f"{user_root}/pipelines/{pipeline_name}/stages/{stage_name}"
 
     #Get the program the user wants to have in that stage
     program = get_program_by_name(program_name)

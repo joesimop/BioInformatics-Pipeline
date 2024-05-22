@@ -40,11 +40,10 @@ class Pipeline:
         
     # Loads the stages into the pipeline
     def load(self):
-        stages = os.listdir(self.path)
-        stages.remove("executions")
+        stages = os.listdir(f"{self.path}/stages")
         for stage_name in stages:
-            if os.path.isdir(f"{self.path}/{stage_name}"):
-                self.add_stage(stage_name, load_stage_config(f"{self.path}/{stage_name}"))
+            if os.path.isdir(f"{self.path}/stages/{stage_name}"):
+                self.add_stage(stage_name, load_stage_config(f"{self.path}/stages/{stage_name}"))
 
         self.sort_stages()
 
@@ -54,7 +53,7 @@ class Pipeline:
             if not set(self.ordered_stages[i].process.program.input_file_types) & \
                 set(self.ordered_stages[i-1].process.program.output_file_types):
                 byop_error(f"Stage {self.ordered_stages[i-1].name} outputs {self.ordered_stages[i-1].process.program.output_file_types}\n" + \
-                           f"Stage {self.ordered_stages[i].name} requires {self.ordered_stages[i].process.program.input_file_types}")
+                           f"\tStage {self.ordered_stages[i].name} requires {self.ordered_stages[i].process.program.input_file_types}")
 
     #Might be the most horiffic sorter to ever exist, but sort the stages in the order they should be executed  
     def sort_stages(self):

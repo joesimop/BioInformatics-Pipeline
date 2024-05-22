@@ -15,7 +15,7 @@ def pipeline_exists(pipeline):
     return os.path.exists(f"{user_root}/pipelines/{pipeline}")
 
 def stage_exists(pipeline, stage_name):
-    return os.path.exists(f'{user_root}/pipelines/{pipeline}/{stage_name}')
+    return os.path.exists(f'{user_root}/pipelines/{pipeline}/stages/{stage_name}')
 
 def data_source_exists(data_source):
     return os.path.exists(f"{user_root}/data/{data_source}")
