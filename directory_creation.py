@@ -4,22 +4,6 @@ from parsing import get_program_by_name
 from helpers import *
 from environment_setup import user_root
 
-# def write_config_file(filepath, program_name, input_dir, output_dir, arguments, extra_params):
-#     with open(filepath, 'w') as file:
-#         # Write basic configuration parameters
-#         file.write(f"program_name: {program_name}\n")
-#         file.write(f"input_dir: {input_dir}\n")
-#         file.write(f"output_dir: {output_dir}\n")
-
-#         # Write arguments if there are any
-#         if arguments:       
-#             file.write("arguments:\n")
-#             for arg in arguments:
-#                 file.write(f"    {arg.symbol}:  {arg.description}\n")
-
-#         # Write extra parameters
-#         file.write(f"extra_params: {extra_params}\n")
-
 def create_pipline_directory():
     if not os.path.exists(f'{user_root}/pipelines'):
         os.makedirs(f'{user_root}/pipelines')

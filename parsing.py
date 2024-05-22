@@ -36,7 +36,7 @@ def get_stage_by_name(pipeline, stage_name):
 list_parameters = [ProgramParseKeys.input_file_types.value,
                    ProgramParseKeys.output_file_types.value,
                    StageParseKeys.input_file_type.value,
-                   StageParseKeys.single_file_input.value,
+                   StageParseKeys.specific_file_input.value,
                    StageParseKeys.input_subdir.value]
 # Parses a configuration file and returns a dictionary with the parsed data
 def parse_config_file(file_path, parse_dict):

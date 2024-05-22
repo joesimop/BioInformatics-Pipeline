@@ -29,7 +29,8 @@ class Process:
         
     def create_executable(self, input_dir, output_dir):
         print(self.arguments)
-        return f"{self.program.exec_name} \\\n\t{self.program.input_cl_identfiier} {input_dir} \\\n\t{self.program.output_cl_identifier} {output_dir} \\\n\t{''.join([arg.cl_input for arg in self.arguments])}"
+        inputs = " ".join(input_dir)
+        return f"{self.program.exec_name} \\\n\t{self.program.input_cl_identfiier} {inputs} \\\n\t{self.program.output_cl_identifier} {output_dir} \\\n\t{''.join([arg.cl_input for arg in self.arguments])}"
         
     def set_input_dir(self, input_dir):
         self.input_dir = input_dir
@@ -37,14 +38,18 @@ class Process:
 class Stage:
     def __init__(self, stage_name, process, path_location, data_source, data_source_is_stage, optional_parameters={}):
 
-        self.name = stage_name                  # The name of the folder it resides in
-        self.process = process                  # The process object that will be executed
-        self.path_location = path_location      # The path to the stage's directory
-        self.data_source = data_source          # Where the stage gets its data from, can be from /data or from a previous stage
-                                                # Note: The path is indeterminable, because we generate paths when executing. If we 
-                                                #       don't connect to the previous stage however, we can just use the data source itself
+        self.name = stage_name                              # The name of the folder it resides in
+        self.process = process                              # The process object that will be executed
+        self.path_location = path_location                  # The path to the stage's directory
+        self.data_source = data_source                      # Where the stage gets its data from, can be from /data or from a previous stage
+                                                            # Note: The path is indeterminable, because we generate paths when executing. If we 
+                                                            #       don't connect to the previous stage however, we can just use the data source itself
         self.data_source_is_stage = data_source_is_stage
         self.optional_parameters = optional_parameters
+
+        #If the user has specified input file types, overwrite the default
+        if optional_parameters.get(StageParseKeys.input_file_type.value):
+            self.process.program.input_file_types = optional_parameters.get(StageParseKeys.input_file_type.value)
 
     def __str__(self):
         name = self.name if self.name == self.process.program.name else f"{self.name} - {self.process.program.name}"
@@ -55,7 +60,8 @@ class Stage:
 
         modifiers ="Modifiers: \n" if self.optional_parameters else "Modifiers: None"
         for p in self.optional_parameters:
-            modifiers += f"\t{p}: {", ".join(self.optional_parameters[p])}\n"
+            parameters = ", ".join(self.optional_parameters[p])
+            modifiers += f"\t{p}: {parameters}\n"
 
         return f"""{name}
 {input}
@@ -78,9 +84,9 @@ class Stage:
                 encoded = ", ".join(optional_args.input_file_type)
                 file.write(f"{StageParseKeys.input_file_type.value} {encoded}\n")
 
-            if optional_args.single_file_input:
-                encoded = ", ".join(optional_args.single_file_input)
-                file.write(f"{StageParseKeys.single_file_input.value}: {encoded}\n")
+            if optional_args.specific_file_input:
+                encoded = ", ".join(optional_args.specific_file_input)
+                file.write(f"{StageParseKeys.specific_file_input.value}: {encoded}\n")
 
             if optional_args.input_subdir:
                 encoded = ", ".join(optional_args.input_subdir)

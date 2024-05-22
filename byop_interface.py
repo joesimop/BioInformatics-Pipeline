@@ -32,7 +32,7 @@ def get_parser():
     create_stage.add_argument('program_name', help='Name of the program to run in the stage')
     create_stage.add_argument('-data_source', help='Name of the data source to use in the stage.\nIt can be a stage in this pipeline or a directory/file in your data folder.\n\n', default=None, metavar="")
     create_stage.add_argument('-input_file_type', help="Custom file extension to get from previous stage.\nThere are default expected file types for each program.\nIf you want to use a different file type, you can specify it here.\nI.E: -input_file_type .txt .cfg\n\n", default=None, metavar="", nargs='+')
-    create_stage.add_argument('-single_file_input', help='If only one file from the previous stage is wanted, designate it here.\nMust be a file you know is output by the previous stage.\n\n', default=None, metavar="", nargs='+')
+    create_stage.add_argument('-specific_file_input', help='If you want specific files from the preivous, designate it here.\nMust be a file you know is output by the previous stage.\n The file will be relative to the /output directory.\n\n', default=None, metavar="", nargs='+')
     create_stage.add_argument('-input_subdir', help='If you want the input of this stage to be in a subdirectory of the previous stage, specify it here.\nCan be multiple, designate each folder with spaces\n\n', default=None, metavar="", nargs='+')
 
     #Run a pipeline

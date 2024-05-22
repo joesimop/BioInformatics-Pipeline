@@ -20,7 +20,7 @@ class StageParseKeys(Enum):
     arguments = "arguments"
     data_source = "data source"
     stage_name = "stage name"
-    single_file_input = "single file input"
+    specific_file_input = "specific file input"
     input_file_type = "input file type"
     input_subdir = "input subdirectory"
 

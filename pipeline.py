@@ -1,6 +1,6 @@
 import os
 from parsing import load_stage_config
-from helpers import pipeline_exists, byop_error
+from helpers import pipeline_exists, byop_error, construct_file_extension_identifiers, contstruct_input_dir
 from environment_setup import user_root
 
 class Pipeline:
@@ -50,8 +50,11 @@ class Pipeline:
 
     def verify_stage_compatablilty(self):
         for i in range(1, len(self.stages)):
-            if self.stages[i].process.program.name not in self.stages[i-1].process.program.pipeline_stages:
-                byop_error(f"Stage {self.stages[i].name} is not compatible with the previous stage")
+            #If there in no intersection between the input file types of the current stage and the previous stage, error
+            if not set(self.ordered_stages[i].process.program.input_file_types) & \
+                set(self.ordered_stages[i-1].process.program.output_file_types):
+                byop_error(f"Stage {self.ordered_stages[i-1].name} outputs {self.ordered_stages[i-1].process.program.output_file_types}\n" + \
+                           f"Stage {self.ordered_stages[i].name} requires {self.ordered_stages[i].process.program.input_file_types}")
 
     #Might be the most horiffic sorter to ever exist, but sort the stages in the order they should be executed  
     def sort_stages(self):
@@ -81,6 +84,9 @@ class Pipeline:
 
     def execute(self):
 
+        #First we need to veryify that the stages are compatible
+        self.verify_stage_compatablilty()
+
         #First, we need to update the run number in the metadata file
         with open(self.metadata_file, 'r+') as file:
             run_number = int(file.readline()[6])
@@ -94,24 +100,23 @@ class Pipeline:
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
 
+        stage_output_dir = None
+
         print("Executing Pipeline\n")
         for stage in self.ordered_stages:
 
+            # First, we need to construct the input directories for the stage
+            # this will also verify that the input directories exist from the previous stage
+            input_dir = contstruct_input_dir(stage, stage_output_dir)
+            input_dir = construct_file_extension_identifiers(stage, input_dir)
+
             #Make an output directory for the stage
-            stage_output = f"{output_dir}/{stage.name}"
-            if not os.path.exists(stage_output):
-                os.mkdir(stage_output)
-            
-            #The input will exist, we checked when we loaded in the stages
-            if stage.data_source_is_stage:
-                input_dir = f"{output_dir}/{stage.data_source}/output"
-            else:
-                input_dir = f"{user_root}/data/{stage.data_source}"
-                
-            
+            stage_output_dir = f"{output_dir}/{stage.name}"
+            if not os.path.exists(stage_output_dir):
+                os.mkdir(stage_output_dir)
 
             print(f"Executing Stage: {stage.name}")
-            exec = stage.process.create_executable(input_dir, stage_output)
+            exec = stage.process.create_executable(input_dir, stage_output_dir)
             print(f"Executing: {exec}")
             #os.system(exec)
         
