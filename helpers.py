@@ -20,6 +20,14 @@ def stage_exists(pipeline, stage_name):
 def data_source_exists(data_source):
     return os.path.exists(f"{user_root}/data/{data_source}")
 
+def list_avaialble_pipelines():
+    return os.listdir('pipelines')
+
+def list_available_programs():
+    for program in os.listdir('supported_programs'):
+        if program != "README":
+            print(program[0:-4])
+
 #Check if the last created stage exists
 def last_created_stage(pipeline):
     if isfile(f"{user_root}/pipelines/{pipeline}/.{pipeline}_metadata.txt"):
@@ -90,3 +98,13 @@ def construct_file_extension_identifiers(stage, input_directories):
             for directory in input_directories:
                 yield f"{directory}*{file_type}"
 
+
+def update_run_count(file_path):
+    with open(file_path, 'r+') as file:
+            run_number = int(file.readline()[6])
+            updated_run = f"runs: {run_number + 1}"
+            file.seek(0)
+            file.write(updated_run)
+            file.close()
+
+    return run_number

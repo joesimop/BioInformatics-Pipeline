@@ -1,6 +1,6 @@
 import os
 from parsing import load_stage_config
-from helpers import pipeline_exists, byop_error, construct_file_extension_identifiers, contstruct_input_dir
+from helpers import *
 from environment_setup import user_root
 
 class Pipeline:
@@ -83,18 +83,13 @@ class Pipeline:
 
     def execute(self):
 
-        #First we need to veryify that the stages are compatible
+        #First we need to veryify that the stages are compatible, file type wise
         self.verify_stage_compatablilty()
 
         #First, we need to update the run number in the metadata file
-        with open(self.metadata_file, 'r+') as file:
-            run_number = int(file.readline()[6])
-            updated_run = f"runs: {run_number + 1}"
-            file.seek(0)
-            file.write(updated_run)
-            file.close()
+        run_number = update_run_count(self.metadata_file)
 
-
+        #Create the run directory
         output_dir = f"{self.path}/executions/run_{run_number}"
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)

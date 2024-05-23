@@ -5,7 +5,7 @@ from byop_interface import get_parser
 from directory_creation import *
 from parsing import *
 from pipeline import Pipeline
-from help import *
+from helpers import list_avaialble_pipelines, list_available_programs
 from environment_setup import user_root
 
 def main(command_line=None):
