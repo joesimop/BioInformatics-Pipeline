@@ -1,8 +1,8 @@
 import os, sys
-from classes import Argument, Program, Stage, Process
-from parsing import get_program_by_name
-from helpers import *
-from environment_setup import user_root
+from byop.classes import Argument, Program, Stage, Process
+from byop.parsing import get_program_by_name
+from byop.helpers import *
+from byop.environment_setup import user_root
 
 def create_pipline_directory():
     if not os.path.exists(f'{user_root}/pipelines'):

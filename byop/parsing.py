@@ -1,8 +1,8 @@
 import os
-from classes import Argument, Program, Process, Stage
-from helpers import stage_exists, data_source_exists, byop_error
-from environment_setup import program_root, user_root
-from file_parser_keys import ProgramParseKeys, StageParseKeys
+from byop.classes import Argument, Program, Process, Stage
+from byop.helpers import stage_exists, data_source_exists, byop_error
+from byop.environment_setup import program_root, user_root
+from byop.file_parser_keys import ProgramParseKeys, StageParseKeys
 
 def get_program_by_name(program_name):
     if os.path.exists(f'{program_root}/supported_programs'):

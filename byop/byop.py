@@ -1,12 +1,12 @@
 import sys
 import os
 import argparse
-from byop_interface import get_parser
-from directory_creation import *
-from parsing import *
-from pipeline import Pipeline
-from helpers import list_avaialble_pipelines, list_available_programs
-from environment_setup import user_root
+from byop.byop_interface import get_parser
+from byop.directory_creation import *
+from byop.parsing import *
+from byop.pipeline import Pipeline
+from byop.helpers import list_avaialble_pipelines, list_available_programs
+from byop.environment_setup import user_root
 
 def main(command_line=None):
 

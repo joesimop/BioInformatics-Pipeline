@@ -1,0 +1,17 @@
+setup.py
+byop/__init__.py
+byop/byop.py
+byop/byop_interface.py
+byop/classes.py
+byop/directory_creation.py
+byop/enums.py
+byop/environment_setup.py
+byop/file_parser_keys.py
+byop/helpers.py
+byop/parsing.py
+byop/pipeline.py
+byop.egg-info/PKG-INFO
+byop.egg-info/SOURCES.txt
+byop.egg-info/dependency_links.txt
+byop.egg-info/entry_points.txt
+byop.egg-info/top_level.txt

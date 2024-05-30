@@ -1,6 +1,6 @@
 import os, sys
-from environment_setup import user_root
-from file_parser_keys import StageParseKeys
+from byop.environment_setup import user_root
+from byop.file_parser_keys import StageParseKeys
 
 def already_exists(path):
     return os.path.exists(path)

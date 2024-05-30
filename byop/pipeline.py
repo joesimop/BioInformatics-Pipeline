@@ -1,7 +1,7 @@
 import os
-from parsing import load_stage_config
-from helpers import *
-from environment_setup import user_root
+from byop.parsing import load_stage_config
+from byop.helpers import *
+from byop.environment_setup import user_root
 
 class Pipeline:
     def __init__(self, pipeline_name):
@@ -27,7 +27,6 @@ class Pipeline:
     
     def print(self):
         print(f"\nPipeline Name: {self.name}\n")
-        print(self.ordered_stages)
         for i in range(0, len(self.ordered_stages)):
             print(f"\nStage {i+1}: ", end="")
             print(self.ordered_stages[i])

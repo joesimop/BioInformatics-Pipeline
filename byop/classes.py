@@ -1,5 +1,5 @@
 import os
-from file_parser_keys import StageParseKeys
+from byop.file_parser_keys import StageParseKeys
 class Argument:
     def __init__(self, symbol, description):
         self.symbol = symbol
