@@ -91,7 +91,7 @@ def construct_file_extension_identifiers(stage, input_directories):
     #At the moment, only allow for one directory if the uses specifies files
     if stage.optional_parameters.get(StageParseKeys.specific_file_input, None):
         for file in stage.optional_parameters[StageParseKeys.specific_file_input]:
-            yield f"{input_directories[0]}{file}"
+            yield f"{input_directories[0]}*{file}"
     else:
         file_types = stage.process.program.input_file_types
         for file_type in file_types:
@@ -108,3 +108,20 @@ def update_run_count(file_path):
             file.close()
 
     return run_number
+
+def execute_command(command, program_name, output_dir):
+    
+    import subprocess
+
+    subprocess_input = command.strip().split(" ")
+
+    with open(f"{output_dir}/{program_name}_output.txt", 'w') as output_file:
+        process = subprocess.Popen(subprocess_input, stdout=subprocess.PIPE, check=True)
+
+        for c in iter(lambda: process.stdout.read(1), ""):
+            sys.stdout.write(c)
+            output_file.write(c)
+
+        process.wait()
+
+    return

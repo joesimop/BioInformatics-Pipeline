@@ -28,9 +28,10 @@ class Process:
         self.arguments = arguments
         
     def create_executable(self, input_dir, output_dir):
-        print(self.arguments)
         inputs = " ".join(input_dir)
-        return f"{self.program.exec_name} \\\n\t{self.program.input_cl_identfiier} {inputs} \\\n\t{self.program.output_cl_identifier} {output_dir} \\\n\t{''.join([arg.cl_input for arg in self.arguments])}"
+        print("Executing: ", end="")
+        print(f"{self.program.exec_name} \\\n\t{self.program.input_cl_identfiier} {inputs} \\\n\t{self.program.output_cl_identifier} {output_dir} \\\n\t{''.join([arg.cl_input for arg in self.arguments])}")
+        return f"{self.program.exec_name} {self.program.input_cl_identfiier} {inputs} {self.program.output_cl_identifier} {output_dir} {' '.join([f"{arg.symbol} {arg.description}" for arg in self.arguments])}"
         
     def set_input_dir(self, input_dir):
         self.input_dir = input_dir

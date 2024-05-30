@@ -111,6 +111,5 @@ class Pipeline:
 
             print(f"Executing Stage: {stage.name}")
             exec = stage.process.create_executable(input_dir, stage_output_dir)
-            print(f"Executing: {exec}")
-            #os.system(exec)
+            execute_command(exec, stage.process.program.name, stage_output_dir)
         
